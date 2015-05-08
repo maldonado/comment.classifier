@@ -17,15 +17,43 @@ public class CommentDao {
 	}
 
 	public ArrayList<Comment> getCommentsToClassifyByProject(String projectName) {
-		String sql = "select a.* from processed_comment a, comment_class b where a.commentclassid = b.id  and b.projectname = ? and a.classification is null";
+		String sql = "select a.id,a.commentclassid,a.startline,a.endline,a.commenttext,a.type,a.location,a.description,a.dictionary_hit,a.jdeodorant_hit,a.refactoring_list_name ,a.classification, b.projectName from processed_comment a, comment_class b where a.commentclassid = b.id  and b.projectname = ? and a.classification is null order by endline limit 1";
 		return fetchComments(projectName, sql);
 	}
 
 	public ArrayList<Comment> getAllCommentsByProject(String projectName) {
-		String sql = "select a.* from processed_comment a, comment_class b where a.commentclassid = b.id  and b.projectname = ?";
+		String sql = "select a.id,a.commentclassid,a.startline,a.endline,a.commenttext,a.type,a.location,a.description,a.dictionary_hit,a.jdeodorant_hit,a.refactoring_list_name ,a.classification,b.projectName from processed_comment a,  comment_class b where a.commentclassid = b.id  and b.projectname = ? order by endline limit 1";
 		return fetchComments(projectName, sql);
 	}
 
+	public Comment findById(long commentId) {
+		String sql = "select a.id,a.commentclassid,a.startline,a.endline,a.commenttext,a.type,a.location,a.description,a.dictionary_hit,a.jdeodorant_hit,a.refactoring_list_name ,a.classification,b.projectName from processed_comment a, comment_class b where a.commentclassid = b.id  and a.id = ? ";
+		Comment comment = new Comment();
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setLong(1, commentId);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while(resultSet.next()){
+				comment.setId(resultSet.getLong("id"));
+				comment.setClassCommentId(resultSet.getLong("commentClassId"));
+				comment.setText(resultSet.getString("commentText"));
+				comment.setType(resultSet.getString("type"));
+				comment.setLocation(resultSet.getString("location"));
+				comment.setDescription(resultSet.getString("description"));
+				comment.setStartLineWitoutCorrection(resultSet.getInt("startLine"));
+				comment.setEndLineWitoutCorrection(resultSet.getInt("endLine")); 
+				comment.setDictionaryHit(resultSet.getInt("dictionary_hit"));
+				comment.setJdeodorantHit(resultSet.getInt("jdeodorant_hit"));
+				comment.setRefactoringListName(resultSet.getString("refactoring_list_name"));
+				comment.setClassification(resultSet.getString("classification"));
+				comment.setProjectName(resultSet.getString("projectName"));  
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return comment;
+	}
+	
 	public void update(Comment comment) {
 		String sql = "UPDATE processed_comment set commentClassId=?, startLine=?, endLine=?, commentText=?, type=?, location=?, description=?, dictionary_hit=?, jdeodorant_hit=?, refactoring_list_name=?, classification=? where id =?";
 		try{
@@ -68,6 +96,7 @@ public class CommentDao {
 				comment.setJdeodorantHit(resultSet.getInt("jdeodorant_hit"));
 				comment.setRefactoringListName(resultSet.getString("refactoring_list_name"));
 				comment.setClassification(resultSet.getString("classification"));
+				comment.setProjectName(resultSet.getString("projectName"));  
 				comments.add(comment);
 			}
 		} catch (SQLException e) {

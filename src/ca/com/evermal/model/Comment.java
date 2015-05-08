@@ -16,6 +16,7 @@ public class Comment {
 	private int jdeodorantHit;
 	private String refactoringListName;
 	private String classification;
+	private String projectName;
 
 	public void setId(long id) {
 		this.id = id;
@@ -119,5 +120,14 @@ public class Comment {
 
 	public void setDictionaryHit(int dictionaryHit) {
 		this.dictionaryHit = dictionaryHit;
+	}
+
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+		
+	}
+	
+	public String getProjectName(){
+		return projectName;
 	}
 }

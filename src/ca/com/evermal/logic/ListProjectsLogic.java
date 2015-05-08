@@ -1,4 +1,4 @@
-package ca.com.evermal.controller;
+package ca.com.evermal.logic;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import ca.com.evermal.dao.ProjectDao;
 
-public class ListProjectsController implements Controller{
+public class ListProjectsLogic implements Logic{
 
 	@Override
 	public String execute(HttpServletRequest req, HttpServletResponse resp) throws Exception {

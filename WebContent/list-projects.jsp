@@ -26,7 +26,10 @@
 		
 		
 		$( "#selectmenu" ).on( "selectmenuchange", function( event, ui ) {
-			alert($("#selectmenu option:selected").text());	
+			/* alert($("#selectmenu option:selected").text()); */
+			var projectName = $("#selectmenu option:selected").text();
+			window.location = "/comment.classifier/mvc?logic=ListCommentsLogic&projectName=" + projectName + "&getWithoutClassification=true"
+			
 		} );
 		
 	</script>
