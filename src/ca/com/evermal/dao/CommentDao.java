@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 import ca.com.evermal.model.Comment;
 
@@ -16,16 +15,45 @@ public class CommentDao {
 		this.connection = connection;
 	}
 
-	public ArrayList<Comment> getCommentsToClassifyByProject(String projectName) {
-		String sql = "select a.id,a.commentclassid,a.startline,a.endline,a.commenttext,a.type,a.location,a.description,a.dictionary_hit,a.jdeodorant_hit,a.refactoring_list_name ,a.classification, b.projectName from processed_comment a, comment_class b where a.commentclassid = b.id  and b.projectname = ? and a.classification is null order by endline limit 1";
+	public Comment getCommentsToClassifyByProject(String projectName) {
+		String sql = "select a.id,a.commentclassid,a.startline,a.endline,a.commenttext,a.type,a.location,a.description,a.dictionary_hit,a.jdeodorant_hit,a.refactoring_list_name ,a.classification, b.projectName from processed_comment a, comment_class b where a.commentclassid = b.id  and b.projectname = ? and a.classification is null order by a.id limit 1";
 		return fetchComments(projectName, sql);
 	}
 
-	public ArrayList<Comment> getAllCommentsByProject(String projectName) {
-		String sql = "select a.id,a.commentclassid,a.startline,a.endline,a.commenttext,a.type,a.location,a.description,a.dictionary_hit,a.jdeodorant_hit,a.refactoring_list_name ,a.classification,b.projectName from processed_comment a,  comment_class b where a.commentclassid = b.id  and b.projectname = ? order by endline limit 1";
+	public Comment getAllCommentsByProject(String projectName) {
+		String sql = "select a.id,a.commentclassid,a.startline,a.endline,a.commenttext,a.type,a.location,a.description,a.dictionary_hit,a.jdeodorant_hit,a.refactoring_list_name ,a.classification,b.projectName from processed_comment a,  comment_class b where a.commentclassid = b.id  and b.projectname = ? order by a.is limit 1";
 		return fetchComments(projectName, sql);
 	}
 
+	public Comment findPreviousById(long commentId, String projectName) {
+		String sql = "select a.id, a.commentclassid, a.startline, a.endline, a.commenttext, a.type, a.location,a.description,a.dictionary_hit,a.jdeodorant_hit,a.refactoring_list_name ,a.classification,b.projectName  from processed_comment a, comment_class b where a.commentclassid = b.id and b.projectname = ? and  a.id < ? order by a.id  desc  limit 1";
+		Comment comment = new Comment();
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, projectName);
+			preparedStatement.setLong(2, commentId);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while(resultSet.next()){
+				comment.setId(resultSet.getLong("id"));
+				comment.setClassCommentId(resultSet.getLong("commentClassId"));
+				comment.setText(resultSet.getString("commentText"));
+				comment.setType(resultSet.getString("type"));
+				comment.setLocation(resultSet.getString("location"));
+				comment.setDescription(resultSet.getString("description"));
+				comment.setStartLineWitoutCorrection(resultSet.getInt("startLine"));
+				comment.setEndLineWitoutCorrection(resultSet.getInt("endLine")); 
+				comment.setDictionaryHit(resultSet.getInt("dictionary_hit"));
+				comment.setJdeodorantHit(resultSet.getInt("jdeodorant_hit"));
+				comment.setRefactoringListName(resultSet.getString("refactoring_list_name"));
+				comment.setClassification(resultSet.getString("classification"));
+				comment.setProjectName(resultSet.getString("projectName"));  
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return comment;
+	}
+	
 	public Comment findById(long commentId) {
 		String sql = "select a.id,a.commentclassid,a.startline,a.endline,a.commenttext,a.type,a.location,a.description,a.dictionary_hit,a.jdeodorant_hit,a.refactoring_list_name ,a.classification,b.projectName from processed_comment a, comment_class b where a.commentclassid = b.id  and a.id = ? ";
 		Comment comment = new Comment();
@@ -76,14 +104,14 @@ public class CommentDao {
 		}
 	}
 
-	private ArrayList<Comment> fetchComments(String projectName, String sql) {
-		ArrayList<Comment> comments = new ArrayList<Comment>();
+	private Comment fetchComments(String projectName, String sql) {
+		Comment comment = new Comment();
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(1, projectName);
 			ResultSet resultSet = preparedStatement.executeQuery();
+			
 			while(resultSet.next()){
-				Comment comment = new Comment();
 				comment.setId(resultSet.getLong("id"));
 				comment.setClassCommentId(resultSet.getLong("commentClassId"));
 				comment.setText(resultSet.getString("commentText"));
@@ -97,11 +125,11 @@ public class CommentDao {
 				comment.setRefactoringListName(resultSet.getString("refactoring_list_name"));
 				comment.setClassification(resultSet.getString("classification"));
 				comment.setProjectName(resultSet.getString("projectName"));  
-				comments.add(comment);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return comments;
+		return comment;
 	}
+
 }

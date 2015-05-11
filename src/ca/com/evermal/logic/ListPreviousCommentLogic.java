@@ -9,24 +9,19 @@ import ca.com.evermal.dao.CommentDao;
 import ca.com.evermal.dao.ProjectDao;
 import ca.com.evermal.model.Comment;
 
-public class ListCommentsLogic implements Logic{
+public class ListPreviousCommentLogic implements Logic{
 
 	@Override
 	public String execute(HttpServletRequest req, HttpServletResponse resp)	throws Exception {
 		
-		String projectName = (String) req.getParameter("projectName");
+		String projectName =  req.getParameter("projectName");
+		long commentId =  Long.valueOf(req.getParameter("commentId"));
 		Connection connection = (Connection) req.getAttribute("connection");
-		Boolean getWithoutClassification = Boolean.valueOf(req.getParameter("getWithoutClassification"));
 		
-		Comment comment = null;
-		if(getWithoutClassification){
-			comment = new CommentDao(connection).getCommentsToClassifyByProject(projectName);
-		}else{
-			comment = new CommentDao(connection).getAllCommentsByProject(projectName);
-		}
-		
+		CommentDao dao = new CommentDao(connection);
+		Comment comment = dao.findPreviousById(commentId, projectName);		
+	
 		int progress = new ProjectDao(connection).getClassificationProgress(projectName);
-		
 		
 		req.setAttribute("progress", progress);
 		req.setAttribute("comment", comment);

@@ -12,34 +12,38 @@
 
 <body>
 	<input type="hidden" value="${progress}" id='progress'>
+	<input type="hidden" value="${projectName}" id='projectName'>
 
 	<div class='container'>
 
 		<div class='button'>
-			<button id="button">Back to projects</button>
+			<button id="projects">Back to projects</button>
 		</div>
-		
+
 		<div class='h3'>
-			<h3>${projectName} classification progress:</h3>
+			<h3>${projectName}classification progress:</h3>
 		</div>
-		
+
 		<div class='progressbar' id="progressbar"></div>
+
+		<div class='button'>
+			<button id='previous'>Load previous</button>
+		</div>
 
 		<div class='selectclassification'>
 			<select id="classification">
-				
+
 				<option>Other</option>
 				<option>INVESTIGATE</option>
 				<option>BUG_FIX_COMMENT</option>
-				
+				<option>IMPLEMENTATION_RELATED</option>
+
 			</select>
 		</div>
-		
+
 		<div id="dialog" title="Comment">
-			<c:forEach var="comment" items="${comments}">
-				<p>${comment.text}</p>
-				<input type="hidden" value="${comment.id}" id='commentid'>
-			</c:forEach>
+			<p>${comment.text}</p>
+			<input type="hidden" value="${comment.id}" id='commentid'>
 		</div>
 
 
@@ -48,15 +52,24 @@
 	<script>
 		var comment_id = $('#commentid').val();
 		var progress_value = $('#progress').val();
-	
-		$("#classification").selectmenu({change : function(event, ui) {}});
+		var project_name = $('#projectName').val();
+
+		$("#classification").selectmenu({
+			change : function(event, ui) {
+			}
+		});
 		$("#classification").on("selectmenuchange",	function(event, ui) {
-			var classification = $("#classification option:selected").text();
-			window.location = "/comment.classifier/mvc?logic=UpdateCommentLogic&commentId="+ comment_id+ "&classification="+ classification});
-	
-		$("#button").button();
-		$("#button").click(function() {
+			var classification = $("#classification option:selected").text(); 
+			window.location = "/comment.classifier/mvc?logic=UpdateCommentLogic&commentId="	+ comment_id + "&classification="+ classification});
+
+		$("#projects").button();
+		$("#projects").click(function() {
 			window.location = "/comment.classifier/mvc?logic=ListProjectsLogic"
+		});
+
+		$("#previous").button();
+		$("#previous").click(function() {
+			window.location = "/comment.classifier/mvc?logic=ListPreviousCommentLogic&commentId="+ comment_id+ "&projectName="+ project_name
 		});
 
 		$("#dialog")
@@ -92,24 +105,7 @@
 													+ "&classification=TEST_RELATED"
 										}
 									},
-									{
-										id : "implementation",
-										text : "Implementation",
-										click : function() {
-											window.location = "/comment.classifier/mvc?logic=UpdateCommentLogic&commentId="
-													+ comment_id
-													+ "&classification=IMPLEMENTATION_RELATED"
-										}
-									},
-									/* {
-										id : "bugfix",
-										text : "Bug fix",
-										click : function() {
-											window.location = "/comment.classifier/mvc?logic=UpdateCommentLogic&commentId="
-													+ comment_id
-													+ "&classification=BUG_FIX_RELATED"
-										}
-									}, */
+
 									{
 										id : "documentation",
 										text : "Documentation",
@@ -124,7 +120,6 @@
 		$("#progressbar").progressbar({
 			value : parseInt(progress_value)
 		});
-		
 	</script>
 </body>
 
