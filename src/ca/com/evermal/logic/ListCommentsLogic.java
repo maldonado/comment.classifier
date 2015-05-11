@@ -31,6 +31,7 @@ public class ListCommentsLogic implements Logic{
 		
 		req.setAttribute("progress", progress);
 		req.setAttribute("comments", comments);
+		req.setAttribute("projectName", projectName);
 		
 		return "list-comments.jsp";
 	}
