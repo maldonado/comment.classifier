@@ -21,7 +21,7 @@
 		</div>
 
 		<div class='h3'>
-			<h3>${projectName}classification progress:</h3>
+			<h3>${projectName} classification progress:</h3>
 		</div>
 
 		<div class='progressbar' id="progressbar"></div>
@@ -35,8 +35,8 @@
 
 				<option>Other</option>
 				<option>INVESTIGATE</option>
+				<option>DEAD_CODE</option>
 				<option>BUG_FIX_COMMENT</option>
-				<option>IMPLEMENTATION_RELATED</option>
 
 			</select>
 		</div>
@@ -97,12 +97,31 @@
 										}
 									},
 									{
+										id : "implementation",
+										text : "Implementation",
+										click : function() {
+											window.location = "/comment.classifier/mvc?logic=UpdateCommentLogic&commentId="
+													+ comment_id
+													+ "&classification=IMPLEMENTATION_RELATED"
+										}
+									},
+									
+									{
 										id : "test",
 										text : "Test",
 										click : function() {
 											window.location = "/comment.classifier/mvc?logic=UpdateCommentLogic&commentId="
 													+ comment_id
 													+ "&classification=TEST_RELATED"
+										}
+									},
+									{
+										id : "defect",
+										text : "Defect",
+										click : function() {
+											window.location = "/comment.classifier/mvc?logic=UpdateCommentLogic&commentId="
+													+ comment_id
+													+ "&classification=DEFECT_RELATED"
 										}
 									},
 
