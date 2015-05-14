@@ -99,6 +99,19 @@ public class CommentDao {
 			preparedStatement.setString(11, comment.getClassification());
 			preparedStatement.setLong(12, comment.getId());
 			preparedStatement.execute();
+			updateCommentWithTheSameText(comment);
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+	}
+
+	private void updateCommentWithTheSameText(Comment comment) {
+		String sql = "UPDATE processed_comment set classification=? where commenttext =?";
+		try{
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, comment.getClassification());
+			preparedStatement.setString(2, comment.getText());
+			preparedStatement.execute();
 		}catch(SQLException e){
 			e.printStackTrace();
 		}
