@@ -35,7 +35,6 @@
 
 				<option>Other</option>
 				<option>INVESTIGATE</option>
-				<option>DEAD_CODE</option>
 				<option>BUG_FIX_COMMENT</option>
 
 			</select>
@@ -93,7 +92,7 @@
 										click : function() {
 											window.location = "/comment.classifier/mvc?logic=UpdateCommentLogic&commentId="
 													+ comment_id
-													+ "&classification=DESIGN_RELATED"
+													+ "&classification=DESIGN"
 										}
 									},
 									{
@@ -102,7 +101,7 @@
 										click : function() {
 											window.location = "/comment.classifier/mvc?logic=UpdateCommentLogic&commentId="
 													+ comment_id
-													+ "&classification=IMPLEMENTATION_RELATED"
+													+ "&classification=IMPLEMENTATION"
 										}
 									},
 									
@@ -112,7 +111,7 @@
 										click : function() {
 											window.location = "/comment.classifier/mvc?logic=UpdateCommentLogic&commentId="
 													+ comment_id
-													+ "&classification=TEST_RELATED"
+													+ "&classification=TEST"
 										}
 									},
 									{
@@ -121,7 +120,7 @@
 										click : function() {
 											window.location = "/comment.classifier/mvc?logic=UpdateCommentLogic&commentId="
 													+ comment_id
-													+ "&classification=DEFECT_RELATED"
+													+ "&classification=DEFECT"
 										}
 									},
 

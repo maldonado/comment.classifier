@@ -106,7 +106,7 @@ public class CommentDao {
 	}
 
 	private void updateCommentWithTheSameText(Comment comment) {
-		String sql = "UPDATE processed_comment set classification=? where commenttext =?";
+		String sql = "UPDATE processed_comment set classification=? where commenttext like ?";
 		try{
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(1, comment.getClassification());
