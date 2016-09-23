@@ -8,7 +8,16 @@ public class SignificativeSampleComment {
 	private String classification;
 	private String reviewer;
 	private String reviewerClassification;	
+	private Boolean reviewed;
 	
+
+	public Boolean getReviewed() {
+		return reviewed;
+	}
+
+	public void setReviewed(Boolean reviewed) {
+		this.reviewed = reviewed;
+	}
 
 	public void setProcessedCommentId(long processedCommentId) {
 		this.processedCommentId = processedCommentId;

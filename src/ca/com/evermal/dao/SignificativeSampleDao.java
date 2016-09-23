@@ -17,7 +17,12 @@ private Connection connection;
 	}
 	
 	public SignificativeSampleComment getSignificativeSampleCommentsToClassifyByReviewer(String reviewerName) {
-		String sql = "select processedCommentId, projectName, commenttext, classification, reviewer, reviewerClassification from significative_sample where reviewer = ?  and reviewerClassification is null order by processedCommentId limit 1";
+		String sql = "select processedCommentId, projectName, commenttext, classification, reviewer, reviewerClassification, reviewed from significative_sample where reviewer = ?  and reviewerClassification is null order by processedCommentId limit 1";
+		return fetchComments(reviewerName, sql);
+	}
+	
+	public SignificativeSampleComment getSignificativeSampleCommentsWithDisagreementByReviewer(String reviewerName){
+		String sql = "select processedCommentId, projectName, commenttext, classification, reviewer, reviewerClassification, reviewed from significative_sample where reviewer = ?  and reviewerClassification != classification and reviewed = 'false' order by processedCommentId limit 1";
 		return fetchComments(reviewerName, sql);
 	}
 	
@@ -35,6 +40,7 @@ private Connection connection;
 				comment.setClassification(resultSet.getString("classification"));
 				comment.setReviewer(resultSet.getString("reviewer"));
 				comment.setReviewerClassification(resultSet.getString("reviewerClassification"));
+				comment.setReviewed(resultSet.getBoolean("reviewed"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -43,7 +49,7 @@ private Connection connection;
 	}
 	
 	public SignificativeSampleComment findPreviousById(long commentId, String reviewerName) {
-		String sql = "select processedCommentId, projectName, commenttext, classification, reviewer, reviewerClassification  from significative_sample where reviewer = ? and  processedCommentId < ? order by processedCommentId desc  limit 1";
+		String sql = "select processedCommentId, projectName, commenttext, classification, reviewer, reviewerClassification, reviewed from significative_sample where reviewer = ? and  processedCommentId < ? order by processedCommentId desc  limit 1";
 		SignificativeSampleComment comment = new SignificativeSampleComment();
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -56,7 +62,8 @@ private Connection connection;
 				comment.setText(resultSet.getString("commentText"));
 				comment.setClassification(resultSet.getString("classification"));
 				comment.setReviewer(resultSet.getString("reviewer"));
-				comment.setReviewerClassification(resultSet.getString("reviewerClassification"));  
+				comment.setReviewerClassification(resultSet.getString("reviewerClassification"));
+				comment.setReviewed(resultSet.getBoolean("reviewed"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -65,7 +72,7 @@ private Connection connection;
 	}
 	
 	public SignificativeSampleComment findById(long commentId, String reviewer) {
-		String sql = "select processedCommentId, projectName, commenttext, classification, reviewer, reviewerClassification from significative_sample where reviewer = ?  and processedCommentId = ? order by processedCommentId";
+		String sql = "select processedCommentId, projectName, commenttext, classification, reviewer, reviewerClassification, reviewed from significative_sample where reviewer = ?  and processedCommentId = ? order by processedCommentId";
 		SignificativeSampleComment comment = new SignificativeSampleComment();
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -80,6 +87,7 @@ private Connection connection;
 				comment.setClassification(resultSet.getString("classification"));
 				comment.setReviewer(resultSet.getString("reviewer"));
 				comment.setReviewerClassification(resultSet.getString("reviewerClassification"));
+				comment.setReviewed(resultSet.getBoolean("reviewed"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -134,7 +142,7 @@ private Connection connection;
 	}
 
 	public void update(SignificativeSampleComment comment) {
-		String sql = "UPDATE significative_sample set projectName = ?, commentText=?, classification=?, reviewer=?, reviewerClassification=? where processedCommentId =? and reviewer=?";
+		String sql = "UPDATE significative_sample set projectName = ?, commentText=?, classification=?, reviewer=?, reviewerClassification=?, reviewed=? where processedCommentId =? and reviewer=?";
 		try{
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(1, comment.getProjectName());
@@ -142,11 +150,14 @@ private Connection connection;
 			preparedStatement.setString(3, comment.getClassification());
 			preparedStatement.setString(4, comment.getReviewer());
 			preparedStatement.setString(5, comment.getReviewerClassification());
-			preparedStatement.setLong(6, comment.getProcessedCommentId());
-			preparedStatement.setString(7, comment.getReviewer());		
+			preparedStatement.setBoolean(6, comment.getReviewed());
+			preparedStatement.setLong(7, comment.getProcessedCommentId());
+			preparedStatement.setString(8, comment.getReviewer());
 			preparedStatement.execute();
 		}catch(SQLException e){
 			e.printStackTrace();
 		}
 	}
+
+	
 }
